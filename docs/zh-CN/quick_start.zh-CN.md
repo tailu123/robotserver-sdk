@@ -89,7 +89,7 @@ if (!sdk.connect("192.168.1.106", 30000)) {
 
 ```cpp
 // 获取实时状态
-auto status = sdk.request1002_RunTimeStatus();
+auto status = sdk.request1002_RunTimeState();
 std::cout << "当前位置: (" << status.posX << ", " << status.posY << ", " << status.posZ << ")" << std::endl;
 ```
 
@@ -113,7 +113,7 @@ sdk.request1003_StartNavTask(points, [](void(const NavigationResult& navigationR
 
 ```cpp
 // 查询任务状态
-auto taskStatus = sdk.request1007_NavTaskStatus();
+auto taskStatus = sdk.request1007_NavTaskState();
 std::cout << "任务状态: " << static_cast<int>(taskStatus.status) << std::endl;
 ```
 
@@ -137,5 +137,5 @@ sdk.disconnect();
 
 ## 下一步
 
-- 查看 [SDK 架构概述](architecture.md) 了解 SDK 的整体架构和设计理念
-- 查看 [API 参考](api_reference.md) 了解更多 SDK 功能
+- 查看 [SDK 架构概述](architecture.zh-CN.md) 了解 SDK 的整体架构和设计理念
+- 查看 [API 参考](api_reference.zh-CN.md) 了解更多 SDK 功能

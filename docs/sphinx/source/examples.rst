@@ -69,7 +69,7 @@
 
        // 获取实时状态
        std::cout << "获取实时状态..." << std::endl;
-       auto status = sdk.request1002_RunTimeStatus();
+       auto status = sdk.request1002_RunTimeState();
        std::cout << "当前位置: (" << status.posX << ", " << status.posY << ", " << status.posZ << ")" << std::endl;
        std::cout << "电量: " << status.electricity << "%" << std::endl;
 
@@ -93,7 +93,7 @@
 
        // 查询任务状态
        std::cout << "查询任务状态..." << std::endl;
-       auto taskStatus = sdk.request1007_NavTaskStatus();
+       auto taskStatus = sdk.request1007_NavTaskState();
        std::cout << "任务状态: " << static_cast<int>(taskStatus.status) << std::endl;
 
        // 等待任务完成或用户输入
@@ -255,7 +255,7 @@
        RobotServerSdk sdk;
 
        // 尝试获取实时状态（未连接状态）
-       auto status = sdk.request1002_RunTimeStatus();
+       auto status = sdk.request1002_RunTimeState();
        if (status.errorCode != ErrorCode_RealTimeStatus::SUCCESS) {
            std::cout << "获取实时状态失败，错误码: " << static_cast<int>(status.errorCode) << std::endl;
        }

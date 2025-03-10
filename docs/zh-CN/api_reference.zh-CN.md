@@ -57,7 +57,7 @@ bool isConnected() const;
  * @brief 获取机器狗实时状态（同步方法）
  * @return 包含实时状态如位置、速度、角度、电量等
  */
-RealTimeStatus request1002_RunTimeStatus();
+RealTimeStatus request1002_RunTimeState();
 ```
 
 ### 导航任务
@@ -83,7 +83,7 @@ bool request1004_CancelNavTask();
  * @brief 查询导航任务状态（同步方法）
  * @return 包含任务状态和错误码
  */
-TaskStatusResult request1007_NavTaskStatus();
+TaskStatusResult request1007_NavTaskState();
 ```
 
 ### 版本信息
@@ -349,5 +349,5 @@ SDK 的所有公共 API 都是线程安全的，可以从多个线程同时调�
 
 ## 下一步
 
-- 查看 [快速开始](quick_start.md) 了解 SDK 的整体架构和设计理念
-- 查看 [SDK 架构概述](architecture.md) 了解 SDK 的整体架构和设计理念
+- 查看 [快速开始](quick_start.zh-CN.md) 了解 SDK 的整体架构和设计理念
+- 查看 [SDK 架构概述](architecture.zh-CN.md) 了解 SDK 的整体架构和设计理念

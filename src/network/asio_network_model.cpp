@@ -153,7 +153,7 @@ bool AsioNetworkModel::sendMessage(const protocol::IMessage& message) {
                 boost::asio::buffer(data),
                 boost::asio::bind_executor(strand_,
                     [this](const boost::system::error_code& error, std::size_t bytes_transferred) {
-                        send(error, bytes_transferred);
+                        onSend(error, bytes_transferred);
                     }
                 )
             );
@@ -176,7 +176,7 @@ void AsioNetworkModel::startReceive() {
         boost::asio::buffer(receive_buffer_),
         boost::asio::bind_executor(strand_,
             [this](const boost::system::error_code& error, std::size_t bytes_transferred) {
-                receive(error, bytes_transferred);
+                onReceive(error, bytes_transferred);
             }
         )
     );
@@ -211,7 +211,7 @@ void safeCallback(const Callback& callback, const std::string& callbackType, Arg
     }
 }
 
-void AsioNetworkModel::receive(const boost::system::error_code& error, std::size_t bytes_transferred) {
+void AsioNetworkModel::onReceive(const boost::system::error_code& error, std::size_t bytes_transferred) {
     if (error) {
         if (error != boost::asio::error::operation_aborted) {
             std::cerr << "接收数据错误: " << error.message() << std::endl;
@@ -246,7 +246,7 @@ void AsioNetworkModel::receive(const boost::system::error_code& error, std::size
     startReceive();
 }
 
-void AsioNetworkModel::send(const boost::system::error_code& error, std::size_t) {
+void AsioNetworkModel::onSend(const boost::system::error_code& error, std::size_t) {
     if (error) {
         std::cerr << "发送数据错误: " << error.message() << std::endl;
         if (error != boost::asio::error::operation_aborted) {

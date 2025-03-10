@@ -57,7 +57,7 @@ bool isConnected() const;
  * @brief Get the robot dog's real-time status (synchronous method)
  * @return Contains real-time status such as position, speed, angle, battery level, etc.
  */
-RealTimeStatus request1002_RunTimeStatus();
+RealTimeStatus request1002_RunTimeState();
 ```
 
 ### Navigation Tasks
@@ -84,7 +84,7 @@ bool request1004_CancelNavTask();
  * @brief Query navigation task status (synchronous method)
  * @return Contains task status and error code
  */
-TaskStatusResult request1007_NavTaskStatus();
+TaskStatusResult request1007_NavTaskState();
 ```
 
 ### Version Information

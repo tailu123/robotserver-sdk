@@ -161,8 +161,8 @@ int main(int argc, char* argv[]) {
         std::cout << "连接成功!" << std::endl;
 
         // 获取初始实时状态
-        robotserver_sdk::RealTimeStatus status = sdk.request1002_RunTimeStatus();
-        std::cout << "request1002_RunTimeStatus complete" << std::endl;
+        robotserver_sdk::RealTimeStatus status = sdk.request1002_RunTimeState();
+        std::cout << "request1002_RunTimeState complete" << std::endl;
         printStatus(status);
 
         // 创建导航点
@@ -193,11 +193,11 @@ int main(int argc, char* argv[]) {
             std::cout << "\n轮询 #" << pollCount << ":" << std::endl;
 
             // 查询任务状态
-            auto taskStatus = sdk.request1007_NavTaskStatus();
+            auto taskStatus = sdk.request1007_NavTaskState();
             printTaskStatus(taskStatus);
 
             // 获取实时状态
-            auto status = sdk.request1002_RunTimeStatus();
+            auto status = sdk.request1002_RunTimeState();
             printStatus(status);
         }
 

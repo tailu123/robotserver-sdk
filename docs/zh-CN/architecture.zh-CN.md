@@ -37,6 +37,10 @@ SDK 由以下三个主要层次组成：
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
+> 🔥 本示例框架仅创建**两个线程**：
+> 1. **主线程**：负责调用 SDK 接口
+> 2. **IO 事件线程**：负责响应 socket 的待发送/待接收事件，分别通过 onSend() / onReceive() 处理
+
 ## 2. 组件详解
 
 ### 2.1 接口层（Interface Layer）
@@ -99,10 +103,10 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +isConnected()
-        +request1002_RunTimeStatus()
+        +request1002_RunTimeState()
         +request1003_StartNavTask(points: vector<NavigationPoint>, callback: NavigationResultCallback)
         +request1004_CancelNavTask()
-        +request1007_NavTaskStatus()
+        +request1007_NavTaskState()
     }
 
     class RobotServerSdkImpl {
@@ -126,8 +130,8 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +sendMessage(message: IMessage)
-        -receive()
-        -send()
+        -onReceive()
+        -onSend()
     }
 
     class Serializer {
@@ -161,55 +165,7 @@ SDK 中的数据流展示了请求和响应的完整生命周期。
 3. **消息处理** → RobotServerSdkImpl 处理响应消息
 4. **结果返回** → 结果通过同步返回或异步回调传递给用户
 
-### 4.3 connect 流程
-
-- **实线 (->>)**：表示**用户线程**内的同步调用，调用方等待返回结果。
-- **虚线 (-->>)**：表示**依赖系统底层 IO 复用的异步调用**，通常用于 **异步事件回调** 或 **IO 线程的非阻塞操作**。
-
-```mermaid
-sequenceDiagram
-    participant App as 应用程序
-    participant SDK as RobotServerSdk
-    participant Impl as RobotServerSdkImpl
-    participant Net as AsioNetworkModel
-    participant IOThread as IO线程
-    participant Dog as 机器狗系统
-
-    %% Connection Flow
-    App->>SDK: connect(host, port)
-    SDK->>Impl: connect(host, port)
-    Impl->>Net: connect(host, port)
-
-    %% 异步连接请求
-    Net->>Net: async_connect(.., callback)
-
-    %% 主线程等待连接完成或超时
-    Net->>Net: run_one_for(connection_timeout_)
-
-    Net-->>Dog: TCP连接请求
-    Dog-->>Net: 连接响应
-    Net-->>Net: 调用连接完成回调
-
-    %% 启动专用IO线程
-    Net->>Net: run_one_for返回
-    Net->>IOThread: 启动线程(ioThreadFunc)
-
-    %% 启动第一次接收
-    Net->>Net: startReceive()
-
-    %% 返回连接结果
-    Net->>Impl: 返回true(连接成功)
-    Impl->>SDK: 返回true
-    SDK->>App: 返回true
-
-    %% 后续的异步操作
-    IOThread-->>Dog: send
-    Dog-->>IOThread: receive
-
-Note over Net, IOThread: 基于 io_context_.run() 处理 IO 事件（epoll/kqueue/select）
-```
-
-### 4.4 请求流程(同步) 1002, 1004, 1007
+### 4.3 请求流程(同步) 1002, 1004, 1007
 
 - **实线 (->>)**：表示**用户线程**内的同步调用，调用方等待返回结果。
 - **虚线 (-->>)**：表示**依赖系统底层 IO 复用的异步调用**，通常用于 **异步事件回调** 或 **IO 线程的非阻塞操作**。
@@ -225,8 +181,8 @@ sequenceDiagram
     participant Dog as 机器狗系统
 
     %% Request Flow
-    App->>SDK: request1002_RunTimeStatus()
-    SDK->>Impl: request1002_RunTimeStatus()
+    App->>SDK: request1002_RunTimeState()
+    SDK->>Impl: request1002_RunTimeState()
     Impl->>Impl: generateSequenceNumber()
     Impl->>Proto: sendMessage()
     Proto->>Net: serializeMessage()
@@ -247,7 +203,7 @@ sequenceDiagram
     SDK->>App: 返回结果
 ```
 
-### 4.5 请求流程(异步) 1003
+### 4.4 请求流程(异步) 1003
 
 - **实线 (->>)**：表示**用户线程**内的同步调用，调用方等待返回结果。
 - **虚线 (-->>)**：表示**依赖系统底层 IO 复用的异步调用**，通常用于 **异步事件回调** 或 **IO 线程的非阻塞操作**。
@@ -320,5 +276,5 @@ SDK 架构设计考虑了未来扩展需求：
 
 ## 下一步
 
-- 查看 [快速开始](quick_start.md) 了解 SDK 的整体架构和设计理念
-- 查看 [API 参考](api_reference.md) 了解更多 SDK 功能
+- 查看 [快速开始](quick_start.zh-CN.md) 了解 SDK 的整体架构和设计理念
+- 查看 [API 参考](api_reference.zh-CN.md) 了解更多 SDK 功能

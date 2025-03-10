@@ -89,7 +89,7 @@ if (!sdk.connect("192.168.1.106", 30000)) {
 
 ```cpp
 // 獲取實時狀態
-auto status = sdk.request1002_RunTimeStatus();
+auto status = sdk.request1002_RunTimeState();
 std::cout << "當前位置: (" << status.posX << ", " << status.posY << ", " << status.posZ << ")" << std::endl;
 ```
 
@@ -113,7 +113,7 @@ sdk.request1003_StartNavTask(points, [](void(const NavigationResult& navigationR
 
 ```cpp
 // 查詢任務狀態
-auto taskStatus = sdk.request1007_NavTaskStatus();
+auto taskStatus = sdk.request1007_NavTaskState();
 std::cout << "任務狀態: " << static_cast<int>(taskStatus.status) << std::endl;
 ```
 

@@ -103,10 +103,10 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +isConnected()
-        +request1002_RunTimeStatus()
+        +request1002_RunTimeState()
         +request1003_StartNavTask(points: vector<NavigationPoint>, callback: NavigationResultCallback)
         +request1004_CancelNavTask()
-        +request1007_NavTaskStatus()
+        +request1007_NavTaskState()
     }
 
     class RobotServerSdkImpl {
@@ -130,8 +130,8 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +sendMessage(message: IMessage)
-        -receive()
-        -send()
+        -onReceive()
+        -onSend()
     }
 
     class Serializer {
@@ -233,8 +233,8 @@ sequenceDiagram
     SDK->>App: Return true
 
     %% Subsequent Asynchronous Operations
-    IOThread-->>Dog: send
-    Dog-->>IOThread: receive
+    IOThread-->>Dog: onSend
+    Dog-->>IOThread: onReceive
 ```
 
 ### 4.5 Request Process (Synchronous) 1002, 1004, 1007
@@ -252,8 +252,8 @@ sequenceDiagram
     participant Dog as Robot Dog System
 
     %% Request Flow
-    App->>SDK: request1002_RunTimeStatus()
-    SDK->>Impl: request1002_RunTimeStatus()
+    App->>SDK: request1002_RunTimeState()
+    SDK->>Impl: request1002_RunTimeState()
     Impl->>Impl: generateSequenceNumber()
     Impl->>Impl: 保存回调函数 [seqNum, callback]
     Impl->>Proto: sendMessage()

@@ -57,7 +57,7 @@ bool isConnected() const;
  * @brief 獲取機器狗實時狀態（同步方法）
  * @return 包含實時狀態如位置、速度、角度、電量等
  */
-RealTimeStatus request1002_RunTimeStatus();
+RealTimeStatus request1002_RunTimeState();
 ```
 
 ### 導航任務
@@ -83,7 +83,7 @@ bool request1004_CancelNavTask();
  * @brief 查詢導航任務狀態（同步方法）
  * @return 包含任務狀態和錯誤碼
  */
-TaskStatusResult request1007_NavTaskStatus();
+TaskStatusResult request1007_NavTaskState();
 ```
 
 ### 版本信息

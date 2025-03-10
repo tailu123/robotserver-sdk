@@ -165,7 +165,7 @@ public:
         }
     }
 
-    RealTimeStatus request1002_RunTimeStatus() {
+    RealTimeStatus request1002_RunTimeState() {
         try {
             if (!isConnected()) {
                 RealTimeStatus status;
@@ -226,12 +226,12 @@ public:
             return convertToRealTimeStatus(*realTimeResp);
 
         } catch (const std::exception& e) {
-            std::cerr << "request1002_RunTimeStatus 异常: " << e.what() << std::endl;
+            std::cerr << "request1002_RunTimeState 异常: " << e.what() << std::endl;
             RealTimeStatus status;
             status.errorCode = ErrorCode_RealTimeStatus::UNKNOWN_ERROR;
             return status;
         } catch (...) {
-            std::cerr << "request1002_RunTimeStatus 未知异常" << std::endl;
+            std::cerr << "request1002_RunTimeState 未知异常" << std::endl;
             RealTimeStatus status;
             status.errorCode = ErrorCode_RealTimeStatus::UNKNOWN_ERROR;
             return status;
@@ -362,7 +362,7 @@ public:
         }
     }
 
-    TaskStatusResult request1007_NavTaskStatus() {
+    TaskStatusResult request1007_NavTaskState() {
         try {
             if (!isConnected()) {
                 TaskStatusResult result;
@@ -428,12 +428,12 @@ public:
             return result;
 
         } catch (const std::exception& e) {
-            std::cerr << "request1007_NavTaskStatus 异常: " << e.what() << std::endl;
+            std::cerr << "request1007_NavTaskState 异常: " << e.what() << std::endl;
             TaskStatusResult result;
             result.errorCode = ErrorCode_QueryStatus::UNKNOWN_ERROR;
             return result;
         } catch (...) {
-            std::cerr << "request1007_NavTaskStatus 未知异常" << std::endl;
+            std::cerr << "request1007_NavTaskState 未知异常" << std::endl;
             TaskStatusResult result;
             result.errorCode = ErrorCode_QueryStatus::UNKNOWN_ERROR;
             return result;
@@ -561,8 +561,8 @@ bool RobotServerSdk::isConnected() const {
     return impl_->isConnected();
 }
 
-RealTimeStatus RobotServerSdk::request1002_RunTimeStatus() {
-    return impl_->request1002_RunTimeStatus();
+RealTimeStatus RobotServerSdk::request1002_RunTimeState() {
+    return impl_->request1002_RunTimeState();
 }
 
 // 添加基于回调的异步方法实现
@@ -574,8 +574,8 @@ bool RobotServerSdk::request1004_CancelNavTask() {
     return impl_->request1004_CancelNavTask();
 }
 
-TaskStatusResult RobotServerSdk::request1007_NavTaskStatus() {
-    return impl_->request1007_NavTaskStatus();
+TaskStatusResult RobotServerSdk::request1007_NavTaskState() {
+    return impl_->request1007_NavTaskState();
 }
 
 std::string RobotServerSdk::getVersion() {

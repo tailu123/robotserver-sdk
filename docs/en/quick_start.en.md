@@ -89,7 +89,7 @@ if (!sdk.connect("192.168.1.106", 30000)) {
 
 ```cpp
 // Get real-time status
-auto status = sdk.request1002_RunTimeStatus();
+auto status = sdk.request1002_RunTimeState();
 std::cout << "Current position: (" << status.posX << ", " << status.posY << ", " << status.posZ << ")" << std::endl;
 ```
 
@@ -113,7 +113,7 @@ sdk.request1003_StartNavTask(points, [](void(const NavigationResult& navigationR
 
 ```cpp
 // Query task status
-auto taskStatus = sdk.request1007_NavTaskStatus();
+auto taskStatus = sdk.request1007_NavTaskState();
 std::cout << "Task status: " << static_cast<int>(taskStatus.status) << std::endl;
 ```
 

@@ -92,7 +92,7 @@
 .. code-block:: cpp
 
    // 获取实时状态
-   auto status = sdk.request1002_RunTimeStatus();
+   auto status = sdk.request1002_RunTimeState();
    std::cout << "当前位置: (" << status.posX << ", " << status.posY << ", " << status.posZ << ")" << std::endl;
 
 5. 发送导航任务
@@ -118,7 +118,7 @@
 .. code-block:: cpp
 
    // 查询任务状态
-   auto taskStatus = sdk.request1007_NavTaskStatus();
+   auto taskStatus = sdk.request1007_NavTaskState();
    std::cout << "任务状态: " << static_cast<int>(taskStatus.status) << std::endl;
 
 7. 取消导航任务

@@ -62,7 +62,7 @@ public:
      * @brief request1002 获取机器狗的实时状态
      * @return 实时状态信息
      */
-    RealTimeStatus request1002_RunTimeStatus();
+    RealTimeStatus request1002_RunTimeState();
 
     /**
      * @brief request1003 基于回调的异步开始导航任务
@@ -81,7 +81,7 @@ public:
      * @brief request1007 查询当前导航任务状态
      * @return 任务状态查询结果
      */
-    TaskStatusResult request1007_NavTaskStatus();
+    TaskStatusResult request1007_NavTaskState();
 
     /**
      * @brief 获取SDK版本

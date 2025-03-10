@@ -99,10 +99,10 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +isConnected()
-        +request1002_RunTimeStatus()
+        +request1002_RunTimeState()
         +request1003_StartNavTask(points: vector<NavigationPoint>, callback: NavigationResultCallback)
         +request1004_CancelNavTask()
-        +request1007_NavTaskStatus()
+        +request1007_NavTaskState()
     }
 
     class RobotServerSdkImpl {
@@ -126,8 +126,8 @@ classDiagram
         +connect(host: string, port: uint16_t)
         +disconnect()
         +sendMessage(message: IMessage)
-        -receive()
-        -send()
+        -onReceive()
+        -onSend()
     }
 
     class Serializer {
@@ -161,81 +161,10 @@ SDK 中的數據流展示了請求和響應的完整生命週期。
 3. **消息處理** → RobotServerSdkImpl 處理響應消息
 4. **結果返回** → 結果通過同步返回或異步回調傳遞給用戶
 
-### 4.3 時序圖
+### 4.3 請求流程(同步) 1002, 1004, 1007
 
-```mermaid
-sequenceDiagram
-    participant App as 應用程序
-    participant SDK as RobotServerSdk
-    participant Impl as RobotServerSdkImpl
-    participant Proto as Serializer
-    participant Net as AsioNetworkModel
-    participant Dog as 機器狗系統
-
-    App->>SDK: 調用API
-    SDK->>Impl: 轉發請求
-    Impl->>Proto: 創建請求消息
-    Proto->>Proto: 序列化消息
-    Proto->>Net: 傳遞序列化數據
-    Net->>Dog: 發送網絡數據
-
-    Dog-->>Net: 返回響應數據
-    Net-->>Proto: 傳遞原始數據
-    Proto-->>Proto: 解析響應數據
-    Proto-->>Impl: 創建響應消息
-    Impl-->>SDK: 處理響應
-    SDK-->>App: 返回結果
-```
-
-### 4.4 connect 流程
-
-實線箭頭表示用戶線程; 連接時期虛線箭頭依賴系統底層IO; 收發數據時虛線箭頭表示IO線程
-
-
-```mermaid
-sequenceDiagram
-    participant App as 應用程序
-    participant SDK as RobotServerSdk
-    participant Impl as RobotServerSdkImpl
-    participant Net as AsioNetworkModel
-    participant IOThread as IO線程
-    participant Dog as 機器狗系統
-
-    %% Connection Flow
-    App->>SDK: connect(host, port)
-    SDK->>Impl: connect(host, port)
-    Impl->>Net: connect(host, port)
-
-    %% 異步連接請求
-    Net->>Dog: async_connect(socket_, endpoints, callback)
-
-    %% 主線程等待連接完成或超時
-    Net->>Net: run_one_for(connection_timeout_)
-
-    Net-->>Dog: TCP連接請求
-    Dog-->>Net: 連接響應
-    Net-->>Net: 調用連接完成回調,connected_ = true
-
-    %% 啟動專用IO線程
-    Net->>IOThread: 創建並啟動線程(ioThreadFunc)
-    Note over IOThread,IOThread: IO線程持續運行io_context_.run()
-
-    %% 啟動第一次接收
-    Net->>Net: startReceive()
-
-    %% 返回連接結果
-    Net->>Impl: 返回true(連接成功)
-    Impl->>SDK: 返回true
-    SDK->>App: 返回true
-
-    %% 後續的異步操作
-    IOThread-->>Dog: send
-    Dog-->>IOThread: receive
-```
-
-### 4.5 請求流程(同步) 1002, 1004, 1007
-
-實線箭頭表示用戶線程，虛線箭頭表示IO線程
+- **實線 (->>)**：表示**用戶線程**內的同步調用，調用方等待返回結果。
+- **虛線 (-->>)**：表示**依賴系統底層 IO 複用的異步調用**，通常用於 **異步事件回調** 或 **IO 線程的非阻塞操作**。
 
 ```mermaid
 sequenceDiagram
@@ -248,8 +177,8 @@ sequenceDiagram
     participant Dog as 機器狗系統
 
     %% Request Flow
-    App->>SDK: request1002_RunTimeStatus()
-    SDK->>Impl: request1002_RunTimeStatus()
+    App->>SDK: request1002_RunTimeState()
+    SDK->>Impl: request1002_RunTimeState()
     Impl->>Impl: generateSequenceNumber()
     Impl->>Impl: 保存回調函數 [seqNum, callback]
     Impl->>Proto: sendMessage()
@@ -270,9 +199,10 @@ sequenceDiagram
     SDK->>App: 返回結果
 ```
 
-### 4.6 請求流程(異步) 1003
+### 4.4 請求流程(異步) 1003
 
-實線箭頭表示用戶線程，虛線箭頭表示IO線程
+- **實線 (->>)**：表示**用戶線程**內的同步調用，調用方等待返回結果。
+- **虛線 (-->>)**：表示**依賴系統底層 IO 複用的異步調用**，通常用於 **異步事件回調** 或 **IO 線程的非阻塞操作**。
 
 ```mermaid
 sequenceDiagram
